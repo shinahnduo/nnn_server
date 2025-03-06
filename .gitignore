@@ -176,4 +176,4 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # Exclude service-account-file.json from being ignored
-!app/core/config/service-account-file.json
+app/core/config/service-account-file.json

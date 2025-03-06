@@ -10,4 +10,6 @@ db = firestore.client()
 
 # Function to add data to Firestore
 def add_data(collection_name, data):
+    print("test Here!!!!!!!!!!!!!1")
+    print(data)
     db.collection(collection_name).add(data) 
