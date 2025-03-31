@@ -7,7 +7,6 @@ from sqlite_web import sqlite_web
 
 from app.core.configuation import load_config
 from app.domain.models import base
-from app.core.firebase import add_data
 
 # 환경별 설정 불러오기
 config = load_config()
@@ -30,11 +29,3 @@ if "test.db" in str(engine.url):
     print("✅ SQLite 웹 UI 실행 중: http://127.0.0.1:8080")
 else:
     print("❌ 'memory'가 포함되어 있지 않습니다.")
-
-def add_to_firebase_example():
-    data = {
-        "name": "Example",
-        "description": "This is an example entry."
-    }
-    add_data("example_collection", data)
-    print("Data added to Firebase")
