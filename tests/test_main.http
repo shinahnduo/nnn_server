@@ -9,15 +9,6 @@ GET http://127.0.0.1:8000/hello/User
 Accept: application/json
 
 ###
-POST http://localhost:8000/schedule/rKcDhKh2pKFsVqC2xtgo/chapter
-Content-Type: application/json
-
-{
-  "title": "DB 챕터",
-  "description": "이제 진짜 DB에 저장된다"
-}
-
-###
 POST http://localhost:8000/schedule
 Content-Type: application/json
 
@@ -26,6 +17,28 @@ Content-Type: application/json
   "date": "2025-04-03",
   "time": "14:30",
   "description": "디자인 회의"
+}
+
+###
+PUT http://localhost:8000/schedule/eA1L0832V1w4cHlOtIj4
+Content-Type: application/json
+
+{
+  "title": "회의11",
+  "description": "디자인 회의11"
+}
+
+###
+DELETE http://localhost:8000/schedule/l1FMek59hmfJ7DFByCXs
+Content-Type: application/json
+
+###
+POST http://localhost:8000/schedule/rKcDhKh2pKFsVqC2xtgo/chapter
+Content-Type: application/json
+
+{
+  "title": "DB 챕터",
+  "description": "이제 진짜 DB에 저장된다"
 }
 
 

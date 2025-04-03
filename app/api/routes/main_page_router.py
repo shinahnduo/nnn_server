@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
 from app.schema.chapter_schema import ChapterCreateRequest, ChapterResponse
-from app.schema.schedule_schema import ScheduleResponse, ScheduleCreateRequest
+from app.schema.schedule_schema import ScheduleResponse, ScheduleCreateRequest, ScheduleUpdateRequest
 from app.service import chapter_service
-from app.service.schedule_service import create_schedule_for_user
+from app.service.schedule_service import create_schedule_for_user, update_schedule, delete_schedule
 
 router = APIRouter()
 
@@ -35,15 +35,22 @@ async def create_schedule_api(
 
 
 # 일정 수정
-@router.put("/schedule/{schedule_id}")
-async def update_schedule(schedule_id: int):
-    return {"message": f"{schedule_id}번 일정 수정"}
+@router.put("/schedule/{schedule_id}", response_model=ScheduleResponse)
+def update_schedule_api(
+    schedule_id: str,
+    update_data: ScheduleUpdateRequest,
+    uid: str = 'test01'
+    # uid: str = Depends(get_current_user)
+):
+    return update_schedule(uid, schedule_id, update_data)
 
-
-# 일정 삭제
 @router.delete("/schedule/{schedule_id}")
-async def delete_schedule(schedule_id: int):
-    return {"message": f"{schedule_id}번 일정 삭제"}
+def delete_schedule_api(
+    schedule_id: str,
+    uid: str = 'test01'
+    # uid: str = Depends(get_current_user)
+):
+    return delete_schedule(uid, schedule_id)
 
 
 # 챕터 저장

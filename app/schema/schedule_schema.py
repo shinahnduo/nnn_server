@@ -14,3 +14,9 @@ class ScheduleResponse(BaseModel):
     date: date
     time: time
     description: Optional[str] = None
+
+class ScheduleUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    date: Optional[date] = None
+    time: Optional[time] = None
+    description: Optional[str] = None
