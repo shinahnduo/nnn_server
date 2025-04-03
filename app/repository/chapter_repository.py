@@ -1,7 +1,14 @@
 from app.core.firebase import db
 
-def save_chapter_to_firestore(title: str, description: str = None) -> dict:
-    chapter_ref = db.collection("chapters").document()
+def save_chapter_for_schedule(uid: str, schedule_id: str, title: str, description: str = None) -> dict:
+    chapter_ref = (
+        db.collection("users")
+        .document(uid)
+        .collection("schedules")
+        .document(schedule_id)
+        .collection("chapters")
+        .document()
+    )
     chapter_data = {
         "id": chapter_ref.id,
         "title": title,

@@ -9,10 +9,23 @@ GET http://127.0.0.1:8000/hello/User
 Accept: application/json
 
 ###
-POST http://localhost:8000/chapter
+POST http://localhost:8000/schedule/rKcDhKh2pKFsVqC2xtgo/chapter
 Content-Type: application/json
 
 {
   "title": "DB 챕터",
   "description": "이제 진짜 DB에 저장된다"
 }
+
+###
+POST http://localhost:8000/schedule
+Content-Type: application/json
+
+{
+  "title": "회의",
+  "date": "2025-04-03",
+  "time": "14:30",
+  "description": "디자인 회의"
+}
+
+
