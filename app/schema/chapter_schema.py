@@ -9,3 +9,7 @@ class ChapterResponse(BaseModel):
     id: str
     title: str
     description: Optional[str] = None
+
+class ChapterUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None

@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
-from app.schema.chapter_schema import ChapterCreateRequest, ChapterResponse
+from app.schema.chapter_schema import ChapterCreateRequest, ChapterResponse, ChapterUpdateRequest
 from app.schema.schedule_schema import ScheduleResponse, ScheduleCreateRequest, ScheduleUpdateRequest
 from app.service import chapter_service
+from app.service.chapter_service import update_chapter, delete_chapter
 from app.service.schedule_service import create_schedule_for_user, update_schedule, delete_schedule
 
 router = APIRouter()
@@ -65,15 +66,26 @@ def create_chapter_api(
 
 
 # 챕터 수정
-@router.put("/chapter/{chapter_id}")
-async def update_chapter(chapter_id: int):
-    return {"message": f"{chapter_id}번 챕터 수정"}
+@router.put("/schedule/{schedule_id}/chapter/{chapter_id}", response_model=ChapterResponse)
+async def update_chapter_api(
+    schedule_id: str,
+    chapter_id: str,
+    chapter_data: ChapterUpdateRequest,
+    uid: str = 'test01'
+    # uid: str = Depends(get_current_user)
+):
+    return update_chapter(uid, schedule_id, chapter_id, chapter_data)
 
 
 # 챕터 삭제
-@router.delete("/chapter/{chapter_id}")
-async def delete_chapter(chapter_id: int):
-    return {"message": f"{chapter_id}번 챕터 삭제"}
+@router.delete("/schedule/{schedule_id}/chapter/{chapter_id}")
+def delete_chapter_api(
+    schedule_id: str,
+    chapter_id: str,
+    uid: str = 'test01'
+    # uid: str = Depends(get_current_user)
+):
+    return delete_chapter(uid, schedule_id, chapter_id)
 
 
 # 챕터 세부내용 조회
