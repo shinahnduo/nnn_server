@@ -3,7 +3,7 @@ import sqlite3
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlite_web import sqlite_web
+# from sqlite_web import sqlite_web
 
 from app.core.configuation import load_config
 from app.domain.models import base
