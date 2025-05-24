@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, Request
+from datetime import timedelta
+
+from fastapi import APIRouter, HTTPException
+from fastapi import Depends
 from pydantic import BaseModel
+
+from app.core.deps import get_current_user
 from app.core.firebase import createUser, validateUser
 from app.core.security import verify_password, create_access_token, hash_password
-from datetime import timedelta
-from fastapi import Depends
-from app.core.deps import get_current_user
-from google.oauth2 import id_token
-from google.auth.transport import requests
 
 router = APIRouter(prefix='/auth')
 
