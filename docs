@@ -1,0 +1,6 @@
+
+1. users/{uid}/schedules/{scheduleId} ✅
+- schedule 생성
+
+2. users/{uid}/schedules/{scheduleId}/chapters/{chapterId} ✅
+- chapter 생성
