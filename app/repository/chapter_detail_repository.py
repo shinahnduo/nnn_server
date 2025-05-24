@@ -18,6 +18,24 @@ def save_chapter_detail(uid: str, schedule_id: str, chapter_id: str, detail_data
     detail_ref.set(detail_doc)
     return detail_doc
 
+def update_chapter_detail(uid: str, schedule_id: str, chapter_id: str, detail_id: str, detail_data: dict) -> dict:
+    detail_ref = (
+        db.collection("users")
+        .document(uid)
+        .collection("schedules")
+        .document(schedule_id)
+        .collection("chapters")
+        .document(chapter_id)
+        .collection("details")
+        .document(detail_id)
+    )
+    detail_doc = {
+        "id": detail_ref.id,
+        **detail_data
+    }
+    detail_ref.set(detail_doc)
+    return detail_doc
+
 def get_chapter_detail(
     uid: str,
     schedule_id: str,
@@ -86,10 +104,10 @@ def get_detail(
     return detail_doc.to_dict()
 
 # 챕터 세부내용 저장
-def update_chapter_detail(detail_id: str, detail_data: dict) -> dict:
-    detail_ref = (
-        db.collection("details")
-        .document(detail_id)
-    )
-    detail_ref.update(detail_data)
-    return {"id": detail_id, **detail_data}
+# def update_chapter_detail(detail_id: str, detail_data: dict) -> dict:
+#     detail_ref = (
+#         db.collection("details")
+#         .document(detail_id)
+#     )
+#     detail_ref.update(detail_data)
+#     return {"id": detail_id, **detail_data}

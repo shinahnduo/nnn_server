@@ -1,5 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Form
-from app.service.create_page_service import save_chapter_detail_service, get_chapter_progress_service
+from app.service.create_page_service import get_chapter_progress_service, \
+    update_chapter_detail_service
 from app.service.file_service import save_image_to_dropbox, get_image_link_from_dropbox
 import os
 import json
@@ -16,11 +17,12 @@ async def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str):
         raise HTTPException(status_code=404, detail=f"챕터 진행 상황 조회 실패: {str(e)}")
 
 # 챕터 세부내용 저장
-@router.post("/chapter-detail/{uid}/{schedule_id}/{chapter_id}")
+@router.put("/chapter-detail/{uid}/{schedule_id}/{chapter_id}/{detail_id}")
 async def save_chapter_detail(
     uid: str,
     schedule_id: str,
     chapter_id: str,
+    detail_id: str,
     detail_data: str = Form(...),  # Form으로 문자열로 받음
     file: UploadFile = File(None)  # Optional image file
 ):
@@ -28,7 +30,7 @@ async def save_chapter_detail(
         print(detail_data)
         print(file)
         detail_data_dict = json.loads(detail_data)
-        detail = save_chapter_detail_service(uid, schedule_id, chapter_id, detail_data_dict, file)
+        detail = update_chapter_detail_service(uid, schedule_id, chapter_id, detail_id, detail_data_dict, file)
         return {"message": "챕터 세부내용 저장 성공", "detail": detail}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"챕터 세부내용 저장 실패: {str(e)}")
