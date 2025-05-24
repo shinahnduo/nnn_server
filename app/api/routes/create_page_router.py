@@ -1,4 +1,6 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException, Form
+from fastapi import APIRouter, File, UploadFile, HTTPException, Form, Depends, Path
+
+from app.core.deps import get_current_user
 from app.service.create_page_service import get_chapter_progress_service, \
     update_chapter_detail_service
 from app.service.file_service import save_image_to_dropbox, get_image_link_from_dropbox
@@ -17,12 +19,12 @@ async def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str):
         raise HTTPException(status_code=404, detail=f"챕터 진행 상황 조회 실패: {str(e)}")
 
 # 챕터 세부내용 저장
-@router.put("/chapter-detail/{uid}/{schedule_id}/{chapter_id}/{detail_id}")
+@router.put("/chapter-detail/{schedule_id}/{chapter_id}/{detail_id}")
 async def save_chapter_detail(
-    uid: str,
     schedule_id: str,
     chapter_id: str,
     detail_id: str,
+    uid: str = Depends(get_current_user),
     detail_data: str = Form(...),  # Form으로 문자열로 받음
     file: UploadFile = File(None)  # Optional image file
 ):
