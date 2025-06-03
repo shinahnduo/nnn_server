@@ -11,6 +11,7 @@ def save_image_to_dropbox(file, temp_dir: str = "temp") -> str:
 
         dropbox_path = f"/uploads/{file.filename}"
 
+
         uploaded_path = upload_to_dropbox(local_path, dropbox_path)
 
         os.remove(local_path)

@@ -42,6 +42,7 @@ def get_chapter_detail(
     chapter_id: str,
     detail_id: str
 ) -> dict:
+    print(f"Fetching detail with: uid={uid}, schedule_id={schedule_id}, chapter_id={chapter_id}, detail_id={detail_id}")
     detail_ref = (
         db.collection("users")
         .document(uid)
@@ -53,6 +54,7 @@ def get_chapter_detail(
         .document(detail_id)
     )
     detail_doc = detail_ref.get()
+
     if not detail_doc.exists:
         raise ValueError(f"Detail {detail_id} not found")
     return detail_doc.to_dict()
