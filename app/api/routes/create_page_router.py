@@ -1,8 +1,10 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException, Form, Depends, Path
+import httpx
+from fastapi import APIRouter, File, UploadFile, HTTPException, Form, Depends, Path, requests
+from pydantic import BaseModel
 
 from app.core.deps import get_current_user
 from app.service.create_page_service import get_chapter_progress_service, \
-    update_chapter_detail_service
+    update_chapter_detail_service, generate_ai_content_service
 from app.service.file_service import save_image_to_dropbox, get_image_link_from_dropbox
 import os
 import json
@@ -21,6 +23,7 @@ async def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str):
 
 
 # 챕터 세부내용 저장
+
 @router.put("/chapter-detail/{schedule_id}/{chapter_id}/{detail_id}")
 async def save_chapter_detail(
         schedule_id: str,
@@ -31,10 +34,10 @@ async def save_chapter_detail(
         file: UploadFile = File(None)  # Optional image file
 ):
     try:
-        print(detail_data)
-        print(file)
         detail_data_dict = json.loads(detail_data)
         detail = update_chapter_detail_service(uid, schedule_id, chapter_id, detail_id, detail_data_dict, file)
+        # print(detail)
+        # print(await analyze_image())
         return {"message": "챕터 세부내용 저장 성공", "detail": detail}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"챕터 세부내용 저장 실패: {str(e)}")
@@ -59,3 +62,16 @@ async def get_image_link(dropbox_path: str):
         return {"message": "이미지 링크 조회 성공", "link": link}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"이미지 링크 조회 실패: {str(e)}")
+
+# 이미지저장
+@router.post("/generate-ai")
+async def save_chapter_detail(
+        detail_data: str = Form(...),  # Form으로 문자열로 받음
+        file: UploadFile = File(None)  # Optional image file
+):
+    try:
+        detail_data_dict = json.loads(detail_data)
+        generated_ai_content = await generate_ai_content_service(detail_data_dict, file)
+        return {"message": "챕터 세부내용 저장 성공", "content": generated_ai_content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"챕터 세부내용 저장 실패: {str(e)}")
