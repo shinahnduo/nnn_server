@@ -79,18 +79,26 @@ def delete_chapter_detail(
 
 # 챕터 진행상황 조회
 def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str) -> dict:
-    chapter_ref = (
+    details_ref = (
         db.collection("users")
         .document(uid)
         .collection("schedules")
         .document(schedule_id)
         .collection("chapters")
         .document(chapter_id)
+        .collection("details")
     )
-    chapter_doc = chapter_ref.get()
-    if not chapter_doc.exists:
-        raise ValueError(f"Chapter {chapter_id} not found")
-    return chapter_doc.to_dict()
+    docs = details_ref.stream()
+
+    detail_list = []
+    for doc in docs:
+        data = doc.to_dict()
+        data["id"] = doc.id  # detail 문서 ID도 포함
+        detail_list.append(data)
+
+    print(detail_list)
+
+    return detail_list
 
 # 챕터 세부내용 조회
 def get_detail(

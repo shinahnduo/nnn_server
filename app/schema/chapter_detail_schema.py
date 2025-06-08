@@ -11,3 +11,9 @@ class ChapterDetailResponse(BaseModel):
     imageUrl: Optional[HttpUrl] = None
     title: str
     content: str
+
+class ChapterDetailsResponse(BaseModel):
+    id: str
+    imageUrl: Optional[HttpUrl] = None
+    title: str
+    content: str
