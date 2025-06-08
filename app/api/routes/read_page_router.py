@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException
-from app.service.read_page_service import get_detail, update_chapter_detail
+from fastapi import APIRouter, HTTPException, Depends
+
+from app.core.deps import get_current_user
+from app.schema.chapter_detail_schema import ChapterDetailResponse
+from app.service.read_page_service import get_detail, update_chapter_detail, get_details_by_chapter
 
 router = APIRouter()
 
@@ -20,3 +23,15 @@ async def update_chapter_detail(detail_id: str, detail_data: dict):
         return {"message": "챕터 세부내용 저장 성공", "detail": updated_detail}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"챕터 세부내용 저장 실패: {str(e)}")
+
+# 챕터 정보 조회
+@router.get(
+    "/schedule/{schedule_id}/chapter/{chapter_id}",
+    response_model=ChapterDetailResponse
+)
+def get_chapter_detail_api(
+        schedule_id: str,
+        chapter_id: str,
+        uid: str = Depends(get_current_user)
+):
+    return get_details_by_chapter(uid, schedule_id, chapter_id)
