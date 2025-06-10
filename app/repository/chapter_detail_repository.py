@@ -78,7 +78,7 @@ def delete_chapter_detail(
     detail_ref.delete()
 
 # 챕터 진행상황 조회
-def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str) -> dict:
+def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str) -> list[dict]:
     details_ref = (
         db.collection("users")
         .document(uid)
@@ -93,10 +93,12 @@ def get_chapter_progress(uid: str, schedule_id: str, chapter_id: str) -> dict:
     detail_list = []
     for doc in docs:
         data = doc.to_dict()
-        data["id"] = doc.id  # detail 문서 ID도 포함
-        detail_list.append(data)
-
-    print(detail_list)
+        detail_list.append({
+            "id": doc.id,
+            "title": data.get("title", ""),
+            "content": data.get("content", ""),
+            "imageUrl": data.get("imageUrl") or None
+        })
 
     return detail_list
 

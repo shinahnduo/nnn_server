@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.deps import get_current_user
@@ -27,11 +29,13 @@ async def update_chapter_detail(detail_id: str, detail_data: dict):
 # 챕터 정보 조회
 @router.get(
     "/schedule/{schedule_id}/chapter/{chapter_id}",
-    response_model=ChapterDetailResponse
+    response_model=List[ChapterDetailResponse]
 )
 def get_chapter_detail_api(
         schedule_id: str,
         chapter_id: str,
         uid: str = Depends(get_current_user)
 ):
-    return get_details_by_chapter(uid, schedule_id, chapter_id)
+    detail_data_list = get_details_by_chapter(uid, schedule_id, chapter_id)
+    print(detail_data_list)
+    return detail_data_list
