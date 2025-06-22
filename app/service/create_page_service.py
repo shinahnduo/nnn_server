@@ -1,6 +1,7 @@
 import httpx
 from fastapi import HTTPException
 
+from app.constants import BLOG_PROMPT_TEMPLATE, BLOG_PROMPT_WITH_IMAGE_TEMPLATE
 from app.repository.chapter_detail_repository import get_chapter_progress, update_chapter_detail
 from app.service.file_service import save_image_to_dropbox, get_image_link_from_dropbox
 
@@ -11,15 +12,29 @@ def get_chapter_progress_service(uid: str, schedule_id: str, chapter_id: str) ->
     except Exception as e:
         raise
 
-def update_chapter_detail_service(uid: str, schedule_id: str, chapter_id: str, detail_id: str,  detail_data: dict, file=None) -> dict:
+
+def update_chapter_detail_service(uid: str, schedule_id: str, chapter_id: str, detail_id: str, detail_data: dict,
+                                  file=None) -> dict:
     try:
         if file:
             image_path = save_image_to_dropbox(file)
             detail_data["imageUrl"] = get_image_link_from_dropbox(image_path)
-
+            print(detail_data["imageUrl"])
         return update_chapter_detail(uid, schedule_id, chapter_id, detail_id, detail_data)
     except Exception as e:
         raise
+
+
+def select_prompt_with_image(prompt_type: str):
+    if prompt_type == '블로그':
+        return BLOG_PROMPT_WITH_IMAGE_TEMPLATE
+    return BLOG_PROMPT_WITH_IMAGE_TEMPLATE
+
+def select_prompt(prompt_type: str):
+    if prompt_type == '블로그':
+        return BLOG_PROMPT_TEMPLATE
+    return BLOG_PROMPT_TEMPLATE
+
 
 async def generate_ai_content_service(detail_data: dict, file=None) -> dict:
     try:
@@ -30,47 +45,22 @@ async def generate_ai_content_service(detail_data: dict, file=None) -> dict:
             title = detail_data["title"]
             user_summary = detail_data["content"]
             # 최종 프롬프트 생성
-            blog_prompt = f"""
-            당신은 전문 블로거입니다. 아래 세 가지 정보를 기반으로 매끄럽고 감성적인 블로그 글을 작성해 주세요.
-
-            1. **사용자가 제공한 제목:**  
-            - "{title}"
-            
-            2. **사용자가 제공한 글감 요약:**  
-            - "{user_summary}"
-
-            3. **이미지 분석 결과:**  
-            - "{analyzed_image}"
-
-            블로그 글 작성 조건:
-            - 위 세 정보를 자연스럽게 엮어 서론, 본론, 결론 구조로 작성해주세요.
-            - 너무 딱딱하지 않게 **감성적인 문장**을 사용해 주세요.
-            - 중간중간 독자의 공감을 유도할 수 있는 문장도 넣어주세요.
-            - 블로그 스타일은 일상 공유 또는 라이프스타일 중심의 개인적인 톤으로 해주세요.
-            - 글 길이는 약 300~500자 정도로 적당히 유지해주세요.
-            """
-            generated_ai_content = await generate_ai_content(blog_prompt)
+            prompt = select_prompt_with_image(detail_data["promptType"]).format(
+                title=title,
+                user_summary=user_summary,
+                analyzed_image=analyzed_image
+            )
+            generated_ai_content = await generate_ai_content(prompt)
             return generated_ai_content
         else:
             title = detail_data["title"]
             user_summary = detail_data["content"]
-            blog_prompt = f"""
-            당신은 전문 블로거입니다. 아래 두 가지 정보를 기반으로 매끄럽고 감성적인 블로그 글을 작성해 주세요.
-
-            1. **사용자가 제공한 제목:**  
-            - "{title}"
-            
-            2. **사용자가 제공한 글감 요약:**  
-            - "{user_summary}"
-
-            블로그 글 작성 조건:
-            - 위 두 정보를 자연스럽게 엮어 서론, 본론, 결론 구조로 작성해주세요.
-            - 너무 딱딱하지 않게 **감성적인 문장**을 사용해 주세요.
-            - 중간중간 독자의 공감을 유도할 수 있는 문장도 넣어주세요.
-            - 블로그 스타일은 일상 공유 또는 라이프스타일 중심의 개인적인 톤으로 해주세요.
-            - 글 길이는 약 300~500자 정도로 적당히 유지해주세요.
-            """
-            generated_ai_content = await generate_ai_content(blog_prompt)
+            # 최종 프롬프트 생성
+            prompt = select_prompt(detail_data["promptType"]).format(
+                title=title,
+                user_summary=user_summary
+            )
+            generated_ai_content = await generate_ai_content(prompt)
             return generated_ai_content
     except Exception as e:
         raise
@@ -113,6 +103,7 @@ async def generate_ai_content(content: str):
             raise HTTPException(status_code=500, detail=str(e))
 
     return response.json()['choices'][0]['message']['content']
+
 
 async def analyze_image(imageUrl: str):
     payload = {
@@ -162,7 +153,7 @@ async def analyze_image(imageUrl: str):
         try:
             print("start")
             response = await client.post("https://api.x.ai/v1/chat/completions", json=payload, headers=headers)
-            print("image analyze finished: ",response)
+            print("image analyze finished: ", response)
             response.raise_for_status()
         except httpx.HTTPError as e:
             print("Exception object:", repr(e))

@@ -55,6 +55,7 @@ def get_chapter_detail(
     )
     detail_doc = detail_ref.get()
 
+    print(detail_doc)
     if not detail_doc.exists:
         raise ValueError(f"Detail {detail_id} not found")
     return detail_doc.to_dict()

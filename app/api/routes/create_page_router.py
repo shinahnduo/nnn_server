@@ -36,8 +36,6 @@ async def save_chapter_detail(
     try:
         detail_data_dict = json.loads(detail_data)
         detail = update_chapter_detail_service(uid, schedule_id, chapter_id, detail_id, detail_data_dict, file)
-        # print(detail)
-        # print(await analyze_image())
         return {"message": "챕터 세부내용 저장 성공", "detail": detail}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"챕터 세부내용 저장 실패: {str(e)}")
@@ -63,7 +61,7 @@ async def get_image_link(dropbox_path: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"이미지 링크 조회 실패: {str(e)}")
 
-# 이미지저장
+# AI 생성
 @router.post("/generate-ai")
 async def save_chapter_detail(
         detail_data: str = Form(...),  # Form으로 문자열로 받음
