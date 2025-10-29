@@ -99,6 +99,6 @@ Firebase Firestore 및 인증 설정 필요
 
 🙌 기여자
 
-백엔드: sjoongh, annbat
+백엔드: sjoongh, ahnseongeun
 
-프론트엔드: sjoongh, annbat
+프론트엔드: sjoongh, ahnseongeun
